@@ -37,8 +37,16 @@ if ! grep -q "compute_89" setup.py; then
     sed -i 's|    cc_flag.append("arch=compute_80,code=sm_80")|    cc_flag.append("arch=compute_80,code=sm_80")\n    cc_flag.append("-gencode")\n    cc_flag.append("arch=compute_89,code=sm_89")|' setup.py
 fi
 echo "sm_89 gencode lines: $(grep -c 'compute_89' setup.py)"
-pip install --no-index --no-build-isolation . 2>&1 | tail -3
-python -c "import selective_scan_cuda_oflex, selective_scan_cuda_core; print('kernels import ok')"
+# the extensions link against torch's libc10.so, which is only on the loader path once torch is imported
+KCHECK='import torch, selective_scan_cuda_oflex, selective_scan_cuda_core; print("kernels import ok")'
+if [ "${CM_REBUILD:-0}" = 1 ]; then
+    pip install --no-index --no-build-isolation --force-reinstall --no-deps . 2>&1 | tail -3
+elif python -c "$KCHECK" 2>/dev/null; then
+    echo "kernels already built, skipping compilation (set CM_REBUILD=1 to force)"
+else
+    pip install --no-index --no-build-isolation . 2>&1 | tail -3
+fi
+python -c "$KCHECK"
 cd "$REPO"
 
 echo "== 2. numeric check of selective_scan_cuda_oflex"
