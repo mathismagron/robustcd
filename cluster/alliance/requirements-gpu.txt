@@ -1,13 +1,18 @@
-# GPU training stack for Alliance clusters, pinned to wheels listed by
-# `avail_wheels` on Vulcan (2026-09-25, python 3.11). Install with
+# GPU training stack for Alliance clusters, pinned to wheels available on
+# Vulcan (2026-09-25, python 3.11). Install with
 #   pip install --no-index -r requirements-gpu.txt
 # Pinned so that every model in the benchmark trains on the same stack;
 # bump deliberately and record the change.
-torch==2.14.0
-torchvision==0.29.0
-triton==3.6.0
+#
+# Why torch 2.5 and not the newest wheel (2.14): the Alliance mamba_ssm 2.2.4
+# wheel declares torch~=2.5.0 (its CUDA kernels are built against 2.5), and
+# causal_conv1d 1.5.4 declares torch~=2.9.0, so those two cannot coexist.
+# causal_conv1d 1.5.0.post8 is the build contemporary with torch 2.5.
+torch==2.5.1
+torchvision==0.20.1
+triton==3.1.0
 mamba_ssm==2.2.4
-causal_conv1d==1.5.4
+causal_conv1d==1.5.0.post8
 timm==1.0.29
 einops==0.8.2
 numpy
