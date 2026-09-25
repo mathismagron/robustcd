@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+
+# Data and rendered degradations -- never commit imagery
+data/
+degraded/
+demo_render/
+*.zip
+*.rar
+*.tif
+*.tiff
+
+# Cluster job output
+slurm-*.out
+logs/
+
+# Editor / tool state
+.claude/
+.vscode/
+.idea/
+.DS_Store
+__MACOSX/
