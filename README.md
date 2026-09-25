@@ -43,6 +43,7 @@ robustcd/
   metrics/        # SeK / mIoU / Fscd / F1, bootstrap, confusion I/O
 scripts/          # renderers, evaluate.py, compare.py, validation CLIs
 tests/            # python tests/test_metrics.py (or pytest)
+cluster/          # Alliance (Vulcan) env setup, data preparation job, see cluster/README.md
 docs/             # design notes and verification per component
 results/          # verification outputs
 ```

@@ -1,0 +1,31 @@
+{
+  "root": "local reference (SECOND test, extracted from the original archive)",
+  "n_samples": 1694,
+  "files_per_stream": {
+    "im1": 1694,
+    "im2": 1694,
+    "label1": 1694,
+    "label2": 1694
+  },
+  "id_list_sha256": "141ae3435d8b42db0f532d185364bbb3c6bc164e955b74a5000b52d4c20e330a",
+  "shapes": [
+    [
+      512,
+      512,
+      3
+    ]
+  ],
+  "n_errors": 0,
+  "errors": [],
+  "class_pixels_both_dates": {
+    "no change": 709917088,
+    "water": 2215031,
+    "ground": 66682931,
+    "low vegetation": 40496140,
+    "tree": 10597413,
+    "building": 57114698,
+    "playground": 1120571
+  },
+  "change_ratio": 0.200673325143429,
+  "samples_without_change": 0
+}
