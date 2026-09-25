@@ -172,8 +172,8 @@ Reading this honestly: integer shifts are recovered essentially exactly
 the renderer — cubic resampling filters the image content the estimator relies
 on. The larger `local_warp` residual is block averaging: a 96 px block spans a
 non-constant displacement, and the residual grows with the field's spatial
-gradient exactly as expected. Per-block agreement is ≥0.97 (Pearson) in every
-mode at the 5th percentile; 3 of 288 checks fall below 0.9, all `shift_subpix`
+gradient exactly as expected. Per-block agreement (Pearson) at the 5th percentile
+is 0.965 for `local_warp` and ≥0.995 for the other three modes; 3 of 288 checks fall below 0.9, all `shift_subpix`
 at 0.5–1 px where the applied displacement is comparable to the estimator noise
 while the residual stays at ~0.23 px.
 

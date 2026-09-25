@@ -25,14 +25,25 @@ error in the product and not a change on the ground. Parameters are seeded per
 any machine. Each rendered set carries a per-sample manifest recording exactly
 what was applied.
 
+## Metrics
+
+A single implementation of SeK, mIoU, Fscd and binary F1/IoU scores every
+model: model repos only write predictions, and `scripts/evaluate.py` scores
+them. It matches the widely used Bi-SRNet `SCDD_eval_all` exactly on the full
+SECOND test set, and adds image-level bootstrap intervals and paired
+clean-vs-degraded comparisons. See [docs/metrics.md](docs/metrics.md), including
+the conventions that make published SeK differ between papers.
+
 ## Layout
 
 ```
 robustcd/
   degradations/   # one module per family + measurement utilities + loaders
   datasets/       # dataset readers (SECOND-style layout; dir or .zip)
-scripts/          # offline renderers and validation CLIs
-docs/             # per-family design notes and verification figures
+  metrics/        # SeK / mIoU / Fscd / F1, bootstrap, confusion I/O
+scripts/          # renderers, evaluate.py, compare.py, validation CLIs
+tests/            # python tests/test_metrics.py (or pytest)
+docs/             # design notes and verification per component
 results/          # verification outputs
 ```
 
