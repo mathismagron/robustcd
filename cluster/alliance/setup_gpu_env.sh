@@ -30,13 +30,21 @@ pip freeze > "$ENV_DIR/freeze.txt"
 echo "--- resolved key packages"
 grep -iE '^(torch|torchvision|triton|mamba.ssm|causal.conv1d|timm|einops|numpy)==' "$ENV_DIR/freeze.txt" || true
 
-# import check only: the login node has no GPU, kernels are exercised by the smoke test
-python - <<'EOF' || echo "WARNING: import check failed on the login node; run gpu_smoke_test.sbatch for the real test"
+grep -iE '^transformers==' "$ENV_DIR/freeze.txt" || true
+
+# import check (the CUDA extensions load without a GPU; kernels are exercised by the smoke test).
+# An import failure here is a real packaging problem, so stop.
+if ! python - <<'EOF'
 import torch
 print("torch", torch.__version__, "built for CUDA", torch.version.cuda)
 import mamba_ssm, causal_conv1d
+from mamba_ssm.ops.selective_scan_interface import selective_scan_fn  # noqa: F401
 print("mamba_ssm", mamba_ssm.__version__, " causal_conv1d", causal_conv1d.__version__)
 EOF
+then
+    echo "FAIL: import check failed; do not run the GPU smoke test until this is fixed"
+    exit 1
+fi
 
 echo
 echo "GPU env ready. Activate with:"
