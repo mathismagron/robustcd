@@ -120,6 +120,25 @@ complete.
    Clean vs degraded is therefore always compared on an identical pixel set,
    which the paired bootstrap requires.
 
+## Model adapters
+
+Each model is integrated through an adapter in `robustcd/adapters/<model>/`.
+The adapter keeps the upstream model, loss, optimiser, schedule, augmentation
+and normalisation, and replaces only what the protocol fixes (loop, seeds,
+precision, selection, export). An adapter is accepted only after:
+
+1. its label and class conversions are unit-tested against both colour tables;
+2. where the authors release a checkpoint, running it through the adapter
+   with upstream decoding reproduces the published number (within the
+   tolerance expected from that number having been selected on test);
+3. every deviation from the upstream recipe is listed in the model's README.
+
+Evaluation-time rules shared by all adapters: **fp32 inference, no TTA,
+full 512 tiles**. Semantic maps are decoded as argmax over the land-cover
+classes only, then masked by the predicted change map. Per-model details are
+in `cluster/models/<model>/README.md`; ChangeMamba is the first
+(`cluster/models/changemamba/README.md`).
+
 ## Hardware and software
 
 NVIDIA L40S (48 GB) on Vulcan (Alliance). The stack is pinned in

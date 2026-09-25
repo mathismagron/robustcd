@@ -41,9 +41,11 @@ robustcd/
   degradations/   # one module per family + measurement utilities + loaders
   datasets/       # dataset readers (SECOND-style layout; dir or .zip)
   metrics/        # SeK / mIoU / Fscd / F1, bootstrap, confusion I/O
+  adapters/       # per-model adapters running upstream code under the protocol
 scripts/          # renderers, evaluate.py, compare.py, validation CLIs
 tests/            # python tests/test_metrics.py (or pytest)
 cluster/          # Alliance (Vulcan) env setup, data preparation job, see cluster/README.md
+  models/<model>/ # per-model setup, kernel build, validation and training jobs
 docs/             # design notes and verification per component
 results/          # verification outputs
 ```

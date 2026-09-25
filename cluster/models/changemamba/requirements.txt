@@ -1,0 +1,8 @@
+# Extra runtime deps of ChangeMamba @ 9ce9cec (from its imports), on top of
+# cluster/alliance/requirements-gpu.txt. Install with pip --no-index.
+yacs
+fvcore
+imageio
+pyyaml
+tqdm
+ninja
