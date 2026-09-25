@@ -31,6 +31,14 @@ Verified locally on CPU, with a PyTorch scan in place of the CUDA kernel:
 Not verified locally: multi-worker data loading (the local sandbox cannot run
 DataLoader workers) and anything on GPU.
 
+**Validated on Vulcan** (job 1187205, L40S; `results/model_checks/changemamba_tiny_released.json`):
+- the kernel matches the PyTorch scan: fwd 1.7e-6, bwd 1.6e-6, bf16 input 4.5e-3;
+- the released checkpoint with upstream decoding gives from-to SeK **0.2208**,
+  which reproduces the published value exactly;
+- the same checkpoint under the SECOND definition scores **SeK 0.2334
+  [0.2217, 0.2447]**, mIoU 0.7333, Fscd 0.6344;
+- restricted and full decodings give identical scores.
+
 ## Steps on Vulcan
 
 ```bash

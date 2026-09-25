@@ -1,0 +1,44 @@
+{
+  "what": "ChangeMamba MambaSCD-Tiny released checkpoint run through the robustcd adapter on SECOND test (1694 images)",
+  "slurm_job_id": 1187205,
+  "cluster": "vulcan",
+  "device": "NVIDIA L40S (sm_89)",
+  "checkpoint": "MambaSCD_Tiny_SECOND_SeK_0.2208.pth (Zenodo 15479555, md5 d1c1d50267da8063b9caa56b63ff1396)",
+  "cm_commit": "9ce9cec13f9ea14bc0ad91f071577ec9b3a97983",
+  "kernel_check": {
+    "result": "PASS",
+    "fwd_rel_err": 1.66e-06,
+    "bwd_rel_err": 1.56e-06,
+    "bf16_input_fwd_rel_err": 0.00445
+  },
+  "upstream_decoding": {
+    "SeK_fromto": 0.2208,
+    "Fscd_fromto": 0.5451,
+    "SeK": 0.2334,
+    "mIoU": 0.7333,
+    "Fscd": 0.6344,
+    "published_value": 0.2208,
+    "reproduced": true
+  },
+  "protocol_decoding": {
+    "SeK": 0.2334,
+    "SeK_ci95": [
+      0.2217,
+      0.2447
+    ],
+    "mIoU": 0.7333,
+    "Fscd": 0.6344,
+    "kappa_n0": 0.3543,
+    "SeK_fromto": 0.2208,
+    "bootstrap": "1000 image replicates"
+  },
+  "throughput_img_per_s_fp32": {
+    "full": 10.41,
+    "restricted": 12.09
+  },
+  "notes": [
+    "Published 0.2208 is the 37-class from-to SeK, with the checkpoint selected on the test set upstream; under the SECOND definition the same checkpoint scores 0.2334.",
+    "Restricted and full decodings give identical scores: class 0 of the semantic heads is never the argmax in practice."
+  ],
+  "source_log": "cm-build-1187205.out (pasted by user)"
+}
