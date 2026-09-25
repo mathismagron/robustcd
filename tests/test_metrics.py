@@ -140,6 +140,21 @@ def test_ignore_index_and_range_checks():
         raise AssertionError("out-of-range prediction must raise")
 
 
+def test_fromto_secondary_score():
+    from robustcd.metrics.scd import fromto_map
+    a = np.array([[0, 1, 6]], np.uint8)
+    b = np.array([[0, 2, 6]], np.uint8)
+    assert fromto_map(a, b).tolist() == [[0, 2, 36]]
+    # class error on one date only: SECOND-definition Fscd = 0.5, from-to Fscd = 0
+    m = SCDMeter()
+    g1 = np.array([[1, 1]], np.uint8); g2 = np.array([[2, 2]], np.uint8)
+    p1 = np.array([[1, 1]], np.uint8); p2 = np.array([[3, 3]], np.uint8)
+    m.update(p1, p2, g1, g2)
+    r = m.compute()
+    assert abs(r["Fscd"] - 0.5) < 1e-12 and r["Fscd_fromto"] == 0.0
+    assert m.total_fromto.shape == (37, 37)
+
+
 def test_compose_prediction():
     sem = np.array([[3, 4], [0, 5]], np.uint8)
     ch = np.array([[1, 0], [1, 1]], np.uint8)

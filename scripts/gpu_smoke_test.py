@@ -62,12 +62,14 @@ def t_device():
     assert torch.cuda.is_available(), "torch.cuda.is_available() is False"
     d = torch.device("cuda")
     x = torch.randn(4096, 4096, device=d, dtype=torch.bfloat16)
-    torch.cuda.synchronize()
-    t0 = time.time()
-    for _ in range(10):
+    for _ in range(3):  # warm-up: cuBLAS handle creation and kernel selection happen on first calls
         y = x @ x
     torch.cuda.synchronize()
-    tflops = 10 * 2 * 4096**3 / (time.time() - t0) / 1e12
+    t0 = time.time()
+    for _ in range(50):
+        y = x @ x
+    torch.cuda.synchronize()
+    tflops = 50 * 2 * 4096**3 / (time.time() - t0) / 1e12
     return {
         "torch": torch.__version__, "cuda_build": torch.version.cuda,
         "cudnn": torch.backends.cudnn.version(), "device": torch.cuda.get_device_name(0),

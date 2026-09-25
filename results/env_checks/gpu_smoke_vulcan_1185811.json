@@ -1,0 +1,69 @@
+{
+  "host": {
+    "node": "rack12-01",
+    "python": "3.11.5"
+  },
+  "device": {
+    "ok": true,
+    "torch": "2.5.1",
+    "cuda_build": "12.2",
+    "cudnn": 90201,
+    "device": "NVIDIA L40S",
+    "capability": [
+      8,
+      9
+    ],
+    "n_visible_gpus": 1,
+    "mem_total_gb": 44.4,
+    "bf16_supported": true,
+    "bf16_matmul_tflops": 12.0,
+    "finite": true,
+    "seconds": 4.07
+  },
+  "causal_conv1d": {
+    "ok": true,
+    "version": "1.5.0.post8",
+    "max_rel_err": 7.134543977826979e-08,
+    "seconds": 0.18
+  },
+  "selective_scan": {
+    "ok": true,
+    "fwd_max_rel_err": 2.235766942249029e-06,
+    "bwd_max_rel_err": 3.1930565000948263e-06,
+    "seconds": 4.13
+  },
+  "mamba_block": {
+    "ok": true,
+    "version": "2.2.4",
+    "out_shape": [
+      8,
+      4096,
+      256
+    ],
+    "fwd_bwd_ms": 3.51,
+    "peak_mem_gb": 0.49,
+    "finite": true,
+    "seconds": 0.35
+  },
+  "data": {
+    "ok": true,
+    "root": "/tmp/SECOND",
+    "n_train": 2968,
+    "samples_read": 64,
+    "ms_per_sample": 22.5,
+    "shape": [
+      512,
+      512,
+      3
+    ],
+    "seconds": 1.65
+  },
+  "job": {
+    "cluster": "vulcan",
+    "slurm_job_id": 1185811,
+    "gres": "gpu:l40s:1",
+    "staging_SECOND_tar_s": 6,
+    "driver": "595.91.07",
+    "note": "bf16_matmul_tflops measured without warm-up (includes cuBLAS init); not a throughput figure. Warm-up added to the script afterwards."
+  }
+}

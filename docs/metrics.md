@@ -33,6 +33,18 @@ H is the K × K confusion matrix accumulated over the whole test set and over
 All of these are invariant to transposing H (tested), so the row/column
 convention cannot introduce a discrepancy.
 
+### Secondary score: the 37-class "from → to" SeK
+
+Some codebases compute SeK on SECOND in a transition space: a changed pixel
+becomes `(c1 − 1)·6 + c2` (36 classes, plus 0 for no change). ChangeMamba
+does this. `SCDMeter` also accumulates that matrix and reports `SeK_fromto`,
+`mIoU_fromto`, `Fscd_fromto` and `kappa_n0_fromto`, so that results can be
+compared with such papers. It is **not** the SECOND definition, and it is not
+interchangeable with it. On SECOND test pseudo-predictions it is about 1 point
+higher for boundary errors and 13.5 points lower for 20 % class noise, because
+a transition is correct only if both dates are
+(`results/metrics_sek_definitions_second.csv`).
+
 ## Conventions that change the number
 
 These are the choices that make "SeK of model X" differ between papers. Each is

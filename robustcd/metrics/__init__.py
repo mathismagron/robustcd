@@ -10,11 +10,12 @@ from .scd import (
     cohen_kappa,
     compose_prediction,
     confusion,
+    fromto_map,
     scd_scores,
 )
 
 __all__ = [
     "BCDMeter", "SCDMeter", "binary_from_semantic", "binary_scores", "bootstrap_ci",
     "cohen_kappa", "compose_prediction", "confusion", "index_to_rgb", "paired_bootstrap",
-    "rgb_to_index", "scd_scores", "to_index", "SECOND_CLASSES", "SECOND_COLORMAP",
+    "fromto_map", "rgb_to_index", "scd_scores", "to_index", "SECOND_CLASSES", "SECOND_COLORMAP",
 ]

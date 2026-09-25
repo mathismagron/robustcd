@@ -97,6 +97,23 @@ def compose_prediction(sem: np.ndarray, change: np.ndarray, no_change_index: int
     return out
 
 
+def fromto_map(sem1: np.ndarray, sem2: np.ndarray, n_semantic: int = 6) -> np.ndarray:
+    """Encode a date pair as a single "from -> to" transition map.
+
+    Changed pixels get ``(c1 - 1) * n_semantic + c2`` (1 .. n_semantic**2); a
+    pixel is 0 if either date is 0.  This is the 37-class space in which some
+    SCD codebases (e.g. ChangeMamba) compute SeK on SECOND.  It is reported here
+    only as a *secondary* score, for comparison with such papers: it is not the
+    SECOND definition, and it penalises a semantic error on either date as a
+    full transition error.
+    """
+    a = sem1.astype(np.int64)
+    b = sem2.astype(np.int64)
+    out = (a - 1) * n_semantic + b
+    out[(a == 0) | (b == 0)] = 0
+    return out
+
+
 # --------------------------------------------------------------------------- #
 # scoring
 # --------------------------------------------------------------------------- #
@@ -222,19 +239,35 @@ class SCDMeter(_Meter):
 
     score_fn = staticmethod(scd_scores)
 
-    def __init__(self, num_classes: int = 7, ignore_index: Optional[int] = 255):
+    def __init__(self, num_classes: int = 7, ignore_index: Optional[int] = 255, track_fromto: bool = True):
         self.num_classes = num_classes
         self.ignore_index = ignore_index
+        self.track_fromto = track_fromto
+        n_ft = (num_classes - 1) ** 2 + 1
+        self.total_fromto = np.zeros((n_ft, n_ft), dtype=np.int64)
         super().__init__()
 
     def update(self, pred1, pred2, gt1, gt2, valid=None, sample_id=None) -> np.ndarray:
         kw = dict(num_classes=self.num_classes, valid=valid, ignore_index=self.ignore_index)
         h = confusion(pred1, gt1, **kw) + confusion(pred2, gt2, **kw)
         self._add(h, sample_id)
+        if self.track_fromto:
+            n_sem = self.num_classes - 1
+            g = fromto_map(gt1, gt2, n_sem)
+            if self.ignore_index is not None:
+                g[(gt1 == self.ignore_index) | (gt2 == self.ignore_index)] = self.ignore_index
+            self.total_fromto += confusion(
+                fromto_map(pred1, pred2, n_sem), g, n_sem**2 + 1, valid=valid, ignore_index=self.ignore_index
+            )
         return h
 
     def compute(self) -> Dict[str, float]:
-        return scd_scores(self.total)
+        """Primary scores (SECOND definition) plus secondary ``*_fromto`` scores."""
+        out = scd_scores(self.total)
+        if self.track_fromto:
+            ft = scd_scores(self.total_fromto)
+            out.update({f"{k}_fromto": ft[k] for k in ("SeK", "mIoU", "Fscd", "kappa_n0")})
+        return out
 
 
 class BCDMeter(_Meter):

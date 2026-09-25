@@ -1,0 +1,27 @@
+{
+  "seed_key": "blake2b-64(\"robustcd-second-val-v1|<id>\"), lowest 10% -> val",
+  "n_train": 2671,
+  "n_val": 297,
+  "n_test": 1694,
+  "sha256_train": "b3fec73076e40e046cddf3f3d051e2a34c2d6ca2d5bd59d18307ff8d22e8411c",
+  "sha256_val": "87306dcb18391aaa123c9b993fa0582290c829e30bcbbf7dcb08aef15fb5d5bc",
+  "sha256_test": "141ae3435d8b42db0f532d185364bbb3c6bc164e955b74a5000b52d4c20e330a",
+  "change_ratio_train": 0.20010923402044312,
+  "change_ratio_val": 0.1929712905626907,
+  "class_share_changed_train": [
+    0.013,
+    0.362,
+    0.246,
+    0.079,
+    0.294,
+    0.006
+  ],
+  "class_share_changed_val": [
+    0.012,
+    0.347,
+    0.263,
+    0.069,
+    0.305,
+    0.004
+  ]
+}
