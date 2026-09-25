@@ -1,6 +1,6 @@
 # Running on Alliance clusters (Vulcan)
 
-Account: `def-hervete`. Code in `$HOME/robustcd` (git), environments in
+Account: `aip-hervete` (the only SLURM association on Vulcan; `def-hervete` is rejected with "Invalid account"). Code in `$HOME/robustcd` (git), environments in
 `$HOME/envs/`, data and outputs in `$SCRATCH/robustcd/`. `$SCRATCH` is purged
 after a period of inactivity: the original archives on the workstation stay the
 reference copy, and everything under `$SCRATCH/robustcd/data` can be rebuilt

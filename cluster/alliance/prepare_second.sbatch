@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --account=def-hervete
+#SBATCH --account=aip-hervete
 #SBATCH --job-name=prep-second
 #SBATCH --time=01:00:00
 #SBATCH --cpus-per-task=4
