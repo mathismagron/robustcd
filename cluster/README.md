@@ -68,6 +68,32 @@ ssh vulcan 'mkdir -p $SCRATCH/robustcd/data/SECOND && tar -xf $SCRATCH/robustcd/
 Then resubmit `prepare_second.sbatch`. It skips the train extraction because
 `train/im1` already exists, and still verifies both splits.
 
+## 4. GPU training environment
+
+Vulcan nodes carry 4 × NVIDIA L40S (48 GB, sm_89), and the scheduler also
+exposes GPU shards (`shard:l40s`, 4 per GPU) for small jobs. The Alliance
+wheelhouse ships prebuilt `mamba_ssm` and `causal_conv1d` for cp311, so
+nothing has to be compiled for the Mamba kernels. Versions are pinned in
+`cluster/alliance/requirements-gpu.txt`.
+
+```bash
+bash ~/robustcd/cluster/alliance/setup_gpu_env.sh            # login node, once
+cd $SCRATCH/robustcd/logs && sbatch ~/robustcd/cluster/alliance/gpu_smoke_test.sbatch
+tail -n 20 gpu-smoke-*.out
+```
+
+The smoke test runs on one L40S. It checks bf16 matmul throughput, compares
+the `causal_conv1d` and `selective_scan` CUDA kernels numerically against
+their pure-PyTorch references (forward and gradients), runs a `Mamba` block
+forward/backward under bf16 autocast, and times the staging of `SECOND.tar`
+into `$SLURM_TMPDIR`. It must end with `ALL PASS`. The resolved package
+versions are written to `~/envs/robustcd-gpu/freeze.txt`; commit a copy with
+the results.
+
+VMamba-based models (ChangeMamba, CSF-Mamba) ship their own selective-scan
+CUDA extension, which is not part of this env. It gets built per model repo in
+a later step.
+
 ## Why a staging tar
 
 Training reads ~19k small PNGs per epoch. On Lustre `$SCRATCH` that is slow
