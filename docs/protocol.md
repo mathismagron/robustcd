@@ -138,8 +138,11 @@ precision, selection, export). An adapter is accepted only after:
 Evaluation-time rules shared by all adapters: **fp32 inference, no TTA,
 full 512 tiles**. Semantic maps are decoded as argmax over the land-cover
 classes only, then masked by the predicted change map. Per-model details are
-in `cluster/models/<model>/README.md`; ChangeMamba is the first
-(`cluster/models/changemamba/README.md`).
+in `cluster/models/<model>/README.md`: ChangeMamba (`cluster/models/changemamba/`) and the
+Ding et al. codebases, i.e. SCanNet, TED, Bi-SRNet and HRSCD-str4 (`cluster/models/ding/`).
+Adapters written after ChangeMamba share one training loop (`robustcd/training/loop.py`),
+one training dataset with the geometric augmentation (`robustcd/datasets/scd_train.py`) and
+one inference/export path (`robustcd/adapters/common.py`).
 
 ## Hardware and software
 

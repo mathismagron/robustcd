@@ -94,6 +94,15 @@ VMamba-based models (ChangeMamba, CSF-Mamba) ship their own selective-scan
 CUDA extension, which is not part of this env. It gets built per model repo in
 a later step.
 
+## 5. Models
+
+Each model has its own directory with setup, validation and training jobs:
+
+| Directory | Models | Setup |
+|---|---|---|
+| `cluster/models/changemamba/` | MambaSCD-Tiny | `setup.sh`, then `build_and_validate.sbatch` (kernel build) |
+| `cluster/models/ding/` | SCanNet, TED, Bi-SRNet, HRSCD-str4 | `setup.sh`, then `validate.sbatch` |
+
 ## Why a staging tar
 
 Training reads ~19k small PNGs per epoch. On Lustre `$SCRATCH` that is slow
