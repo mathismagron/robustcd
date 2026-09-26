@@ -96,3 +96,26 @@ sbatch --export=ALL,MODEL=scannet,SEED=0 ~/robustcd/cluster/models/ding/train.sb
 
 - Unit tests: `tests/test_ding_adapter.py` (upstream checkouts under `$ROBUSTCD_EXT`).
 - Released SCanNet checkpoint on SECOND test: `results/model_checks/scannet_released.json`.
+
+  Job 1194598 (L40S, fp32, no TTA): SeK **0.2360** [95% CI 0.2244, 0.2475],
+  mIoU 0.7305, Fscd 0.6409. The file name gives 0.2394 / 0.7337 / 0.6366, so
+  SeK differs by −0.34 pt, inside the CI, and the adapter is accepted. Those
+  published values were logged by upstream during training, on upstream's val
+  loader, so an exact match is not expected (unlike ChangeMamba, whose
+  published value is on test and was reproduced exactly). Upstream decoding
+  and protocol decoding give identical scores. Throughput: 14.3 img/s.
+- Cost at effective batch 16 on full 512 tiles (100 iterations, accum 1, bf16):
+
+  | Model | s/it | max GiB | 50k iterations |
+  |---|---|---|---|
+  | HRSCD-str4 | 0.731 | 19.4 | 10.2 h |
+  | Bi-SRNet | 0.349 | 15.9 | 4.8 h |
+  | TED | 0.215 | 8.3 | 3.0 h |
+  | TED, teacher on | 0.565 | 8.3 | 7.9 h |
+  | SCanNet | 0.484 | 17.2 | 6.7 h |
+  | SCanNet, teacher on | 1.141 | 17.3 | 15.8 h |
+
+  HRSCD-str4 is the slowest despite being the smallest model: its encoder runs
+  at full resolution. In a real run, the teacher is active only after the val
+  Fscd first exceeds 0.6. A 50k run therefore falls between the two rows and
+  fits in one 24 h allocation.

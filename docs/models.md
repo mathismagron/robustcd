@@ -130,12 +130,20 @@ for all 8 models on those two datasets.
 ## Cost estimate (to be replaced by measured timings)
 
 Per seed at 50 k iterations × effective batch 16 on one L40S, bf16 training.
-Only ChangeMamba-T is measured (1.23 s/it). The rest are order-of-magnitude
-guesses from backbone size.
+Measured (100-iteration timing on one L40S, job 1194598, and the ChangeMamba
+pilot): ChangeMamba-T 1.23 s/it, HRSCD-str4 0.73, Bi-SRNet 0.35, TED 0.22
+(0.57 with the pseudo-label teacher), SCanNet 0.48 (1.14 with the teacher).
+All Ding-codebase models fit batch 16 in one pass (8–19 GiB). Unmeasured rows
+are order-of-magnitude guesses from backbone size. Poly-schedule models add a
+separate 75k pilot run (about 1.5 × one seed).
 
 | Method | Estimated GPU-h / seed | × 3 seeds |
 |---|---|---|
-| HRSCD-str4, Bi-SRNet, TED, SCanNet, ChangeMask | 5–10 each | 75–150 total |
+| HRSCD-str4 (measured) | 10.2 | 31 |
+| Bi-SRNet (measured) | 4.8 | 14 |
+| TED (measured; pseudo labels on from start = upper bound) | 3.0–7.9 | 9–24 |
+| SCanNet (measured; same) | 6.7–15.8 | 20–47 |
+| ChangeMask | 5–10 | 15–30 |
 | ChangeMamba-T (measured) | 17.5 | 52 |
 | CSF-Mamba | ~15–20 | ~50 |
 | Mamba-FCS (VMamba-B) | 30–40 | 90–120 |
