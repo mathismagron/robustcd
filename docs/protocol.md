@@ -122,7 +122,9 @@ complete.
 
 ## Model adapters
 
-Each model is integrated through an adapter in `robustcd/adapters/<model>/`.
+The list of retrained methods and the selection criteria are in
+`docs/models.md`. Each model is integrated through an adapter in
+`robustcd/adapters/<model>/`.
 The adapter keeps the upstream model, loss, optimiser, schedule, augmentation
 and normalisation, and replaces only what the protocol fixes (loop, seeds,
 precision, selection, export). An adapter is accepted only after:
