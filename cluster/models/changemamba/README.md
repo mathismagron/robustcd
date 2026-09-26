@@ -20,6 +20,14 @@ ablation.
 | label conversion, SECOND ↔ ChangeMamba class order (they differ, see `robustcd/adapters/changemamba/__init__.py`) | `prepare.py` |
 | semantic decoding: argmax over classes 1..6 (upstream: over 0..6, where class 0 is never trained) | ours; `--decode full` reproduces upstream |
 | selective-scan CUDA extension, rebuilt with an extra `sm_89` target for L40S | upstream source, one-line build patch |
+| batch: effective 16 as upstream, run as **2 × 8 with gradient accumulation** | **deviation**: batch 16 in one pass does not fit on the 44 GiB L40S (41.7 GiB allocated at the first forward, job 1187369). The decoder's BatchNorm therefore normalises over 8 tiles per pass instead of 16. |
+
+Upstream quirk, kept as is: the ImageNet backbone `vssm_tiny_0230` has 5
+blocks in stage 3, while the ChangeMamba Tiny config uses 4. Loading
+therefore reports 200 matched, 22 unexpected (`layers.2.blocks.4.*`, dropped)
+and 8 missing (`outnorm0-3`, the change-detection output norms, freshly
+initialised). The released checkpoint has exactly this architecture: it loads
+with 0 missing keys.
 
 Verified locally on CPU, with a PyTorch scan in place of the CUDA kernel:
 - the full train → validate → checkpoint → resume → time-guard exit (code 3) → resume → predict → evaluate path runs;

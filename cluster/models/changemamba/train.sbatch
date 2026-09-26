@@ -20,7 +20,8 @@ set -uo pipefail
 SEED="${SEED:?set SEED}"
 MAX_ITERS="${MAX_ITERS:-50000}"
 BUDGET="${BUDGET:-50000}"
-ACCUM="${ACCUM:-1}"
+ACCUM="${ACCUM:-2}"                     # batch 16 in one pass OOMs on the 44 GiB L40S (41.7 GiB at the first forward);
+                                        # 2 x 8 keeps the effective batch at 16 (BatchNorm then sees 8 per pass)
 GUARD_MIN="${GUARD_MIN:-1380}"          # 23 h of a 24 h allocation
 REPO="${ROBUSTCD_REPO:-$HOME/robustcd}"
 ENV_DIR="${ROBUSTCD_GPU_ENV:-$HOME/envs/robustcd-gpu}"
@@ -33,9 +34,9 @@ SELF="$REPO/cluster/models/changemamba/train.sbatch"
 module load StdEnv/2023 python/3.11 cuda/12.2
 # shellcheck disable=SC1091
 source "$ENV_DIR/bin/activate"
-export PYTHONDONTWRITEBYTECODE=1
+export PYTHONDONTWRITEBYTECODE=1 PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 mkdir -p "$RUN"
-echo "job $SLURM_JOB_ID seed $SEED max_iters $MAX_ITERS budget $BUDGET -> $RUN" | tee -a "$RUN/slurm_jobs.txt"
+echo "$(date -Is) job $SLURM_JOB_ID seed $SEED max_iters $MAX_ITERS budget $BUDGET accum $ACCUM -> $RUN" | tee -a "$RUN/slurm_jobs.txt"
 
 tar -xf "$SCRATCH/robustcd/data/SECOND.tar" -C "$SLURM_TMPDIR" || exit 1
 python -m robustcd.adapters.changemamba.prepare --second-root "$SLURM_TMPDIR/SECOND" \
