@@ -1,0 +1,1 @@
+2026-09-26T03:11:49-06:00 job 1194748 model hrscd4 seed 0 max_iters 75000 budget 75000 accum 1 -> /scratch/magron13/robustcd/runs/hrscd4/pilot75k

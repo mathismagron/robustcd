@@ -1,0 +1,1 @@
+2026-09-26T02:12:56-06:00 job 1194374 seed 1 max_iters 50000 budget 50000 accum 2 -> /scratch/magron13/robustcd/runs/changemamba_tiny/seed1

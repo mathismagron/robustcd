@@ -1,0 +1,1 @@
+2026-09-27T03:58:36-06:00 job 1203567 model scannet seed 1 max_iters 75000 budget 75000 accum 1 -> /scratch/magron13/robustcd/runs/scannet/pilot75k_seed1

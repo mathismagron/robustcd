@@ -83,6 +83,58 @@ SECOND colour table (`robustcd.metrics.labels`). Every job stages
   point of the best val SeK over the extended run. Otherwise raise the budget
   to the smallest multiple of 10k iterations that satisfies the rule. The
   decision uses **val only**; the test set is not scored during the pilot.
+- **Amendment A1 (2026-09-27): length-dependent schedules.** Written after the
+  first Ding-codebase pilot runs and before any further pilot run. The test set
+  has not been scored for any trained model.
+  - *Why.* The rule above assumes that the first 50k iterations of the pilot
+    are a budget-length run. That holds for step schedules (ChangeMamba). For
+    poly or cosine schedules, the 1.5 × pilot is a separate run whose learning
+    rate at 50k is still high.
+  - *Rule.* For these models, compare per seed the best val SeK of the
+    budget-length run with the best val SeK of the 75k run for the same seed.
+  - *Seed-0 differences:*
+
+    | Model | ΔSeK (pt) |
+    |---|---|
+    | HRSCD-str4 | −0.05 |
+    | Bi-SRNet | +0.12 |
+    | TED | +0.09 |
+    | SCanNet | +0.63 |
+
+  - *Why more seeds for SCanNet.* A single paired difference is as noisy as
+    the threshold (seed std up to 0.49 pt), so SCanNet, the only model above
+    0.5, gets pilot runs for seeds 1 and 2.
+  - *Decision.* The budget is kept if the mean paired difference over the
+    three SCanNet seeds is below 0.5 pt. Otherwise it is raised as the rule
+    states.
+  - *Also reported.* The literal within-pilot reading: the best over 36k–50k
+    of the 75k run vs its overall best.
+- **Amendment A2 (2026-09-27): early-peaking models. Post hoc.** Written after
+  seeing the ChangeMamba pilot curve. The test set has not been scored.
+  - *What happened.* ChangeMamba-T reaches its best val SeK at the first
+    evaluations (2k–6k iterations in all three seeds: 22.02 at 2k for the
+    seed-0 pilot). It then settles about 1 pt lower while the training loss
+    keeps falling (1.41 → 0.26), which is overfitting. Successive evaluations
+    differ by only 0.16 pt (std), so the early peak is not val noise.
+  - *Why the rule fails.* Its literal reading gives a 1.05 pt gap (best over
+    36k–50k is 20.98, extended best is 22.02). No larger budget can close the
+    gap, because the extended best lies at the start of the run.
+  - *Reinterpretation.* The rule exists to detect under-training ("no model is
+    compared before it has converged"). For early-peaking models it is
+    applied in that sense: training beyond the budget must not add more than
+    0.5 pt. For ChangeMamba, the best over 50k–75k is 21.01, versus 22.02
+    within the budget, so the budget is kept.
+  - *Reporting.* The literal failure, its cause and this reinterpretation
+    are reported in the paper.
+- **Pilot outcome so far** (`docs/figures/fig_val_curves_second.png`,
+  `results/training_val_summary_second.csv`):
+  - literal within-pilot rule passes for HRSCD-str4 (gap 0.00), Bi-SRNet
+    (0.09), TED (0.00) and SCanNet (0.00);
+  - under A1, SCanNet (+0.63 on seed 0) is pending its seeds 1–2;
+  - ChangeMamba is kept under A2;
+  - the CSF-Mamba pilot is still to run.
+
+  The budget therefore remains provisional, and the test set stays unscored.
 - **Precision**: bf16 autocast on L40S, fp32 master weights.
 - **Seeds: 3 per model** (seeds 0, 1, 2). A seed fixes weight
   initialisation, data order and augmentation draws. Every seed is reported,

@@ -1,0 +1,3 @@
+job 1187369 seed 0 max_iters 75000 budget 50000 -> /scratch/magron13/robustcd/runs/changemamba_tiny/seed0
+2026-09-26T02:03:11-06:00 job 1194297 seed 0 max_iters 75000 budget 50000 accum 2 -> /scratch/magron13/robustcd/runs/changemamba_tiny/seed0
+2026-09-27T01:04:19-06:00 job 1202430 seed 0 max_iters 75000 budget 50000 accum 2 -> /scratch/magron13/robustcd/runs/changemamba_tiny/seed0
