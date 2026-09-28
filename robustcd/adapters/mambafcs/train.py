@@ -97,6 +97,8 @@ def make_train_step(model, device, sek_criterion, lovasz_softmax):
     import torch
     import torch.nn.functional as F
 
+    skipped = {"n": 0}   # micro-batches whose SeK term was dropped, cumulative over this job segment
+
     def step(batch, it):
         pre, post, label_cd, t1, t2 = (t.to(device, non_blocking=True) for t in batch)
         change_mask = (label_cd != 0).float()
@@ -130,6 +132,7 @@ def make_train_step(model, device, sek_criterion, lovasz_softmax):
             # inits on real SECOND tiles), which gives NaN, and a NaN loss would poison AdamW.
             # Such micro-batches drop the SeK term; every other term and every other batch is unchanged.
             sek_ok = bool(torch.isfinite(sek))
+            skipped["n"] += 0 if sek_ok else 1
             w_sek = 0.5 if (it > 1 and sek_ok) else 0.0   # upstream: itera + start_iter > 0 (0-based)
             loss = 1.0 * ce_cd + 0.5 * (ce_t1 + ce_t2) + 0.5 * (lz_t1 + lz_t2 + lz_cd) + 0.05 * sim
             if w_sek:
@@ -137,7 +140,7 @@ def make_train_step(model, device, sek_criterion, lovasz_softmax):
         logs = {"ce_cd": float(ce_cd.detach()), "ce_sem": float((ce_t1 + ce_t2).detach()),
                 "lovasz": float((lz_t1 + lz_t2 + lz_cd).detach()), "sim": float(sim.detach()),
                 "sek_loss": float(sek.detach()) if sek_ok else 0.0,
-                "sek_skipped": 0.0 if sek_ok else 1.0}
+                "sek_skipped": 0.0 if sek_ok else 1.0, "sek_skipped_total": float(skipped["n"])}
         return loss, logs
 
     return step

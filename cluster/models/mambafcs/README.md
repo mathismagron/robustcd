@@ -92,6 +92,23 @@ sbatch --export=ALL,SEED=0,MAX_ITERS=75000,ACCUM=<from timing> ~/robustcd/cluste
 - CPU smoke run: 3 iterations with accumulation, val, checkpoints. It uses a
   PyTorch reference scan instead of the CUDA kernel and 64-px crops
   (`--debug-crop`, tests only).
+- **Released checkpoint on the full SECOND test** (job on L40S, fp32, no TTA,
+  `results/model_checks/mambafcs_released.json`): SeK **0.2526** [95% CI
+  0.2412, 0.2637], mIoU 0.7406, Fscd 0.6542, against 0.2550 / 0.7407 / 0.6578
+  published. SeK is −0.24 pt from the published value, inside the CI, so the
+  adapter is accepted. It is not an exact match: ChangeMamba-T reproduced its
+  published value to the fourth decimal. Upstream and protocol decodings are
+  identical. Throughput: 8.3 img/s.
+- **Cost** at effective batch 16, bf16, full 512 tiles (60 iterations):
+
+  | Micro-batch | s/it | Max memory |
+  |---|---|---|
+  | 4 (`ACCUM=4`) | 1.51 | 21.7 GiB |
+  | 8 (`ACCUM=2`) | 1.58 | 39.9 GiB |
+
+  `ACCUM=4` is kept: it is both faster and far from the memory limit. That
+  gives 20.9 h per 50k seed, which fits one 24 h allocation, and about 31 h
+  for the 75k pilot, which resubmits itself once.
 - Released checkpoint, first 16 test tiles on CPU, upstream decoding: SeK
   0.2543. At n = 16 this only shows that classes are mapped correctly; a
   permuted class order would collapse SeK. The comparison with the

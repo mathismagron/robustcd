@@ -1,0 +1,86 @@
+{
+  "what": "Mamba-FCS released checkpoint run through the robustcd adapter on SECOND test (1694 images)",
+  "checkpoint": "SECOND_SeK_0.255.pth (md5 e05161d74f11c2783e96688ecd8e3ea0)",
+  "fcs_commit": "5c01f1ac86adff89d6dc5eb6e02d83ee8c16f25c",
+  "expected_commit": "5c01f1ac86adff89d6dc5eb6e02d83ee8c16f25c",
+  "config": {
+    "depths": [
+      2,
+      2,
+      15,
+      2
+    ],
+    "dims": 128,
+    "forward_type": "v3noz"
+  },
+  "n_params": 206148071,
+  "load": {
+    "loaded_keys": 1312,
+    "missing": 0,
+    "unexpected": 0
+  },
+  "device": "NVIDIA L40S (sm_89)",
+  "n_images": 1694,
+  "upstream_decoding": {
+    "SeK": 0.2526,
+    "kappa_n0": 0.3786,
+    "mIoU": 0.7406,
+    "Fscd": 0.6542,
+    "SeK_fromto": 0.2427,
+    "Fscd_fromto": 0.574,
+    "published": {
+      "OA": 0.8862,
+      "Fscd": 0.6578,
+      "mIoU": 0.7407,
+      "SeK": 0.255
+    },
+    "abs_diff_vs_published": {
+      "SeK": -0.0024,
+      "mIoU": -0.0001,
+      "Fscd": -0.0036
+    }
+  },
+  "protocol_decoding": {
+    "SeK": 0.2526,
+    "kappa_n0": 0.3786,
+    "mIoU": 0.7406,
+    "Fscd": 0.6542,
+    "SeK_fromto": 0.2427,
+    "Fscd_fromto": 0.574,
+    "ci95": {
+      "SeK": [
+        0.2412,
+        0.2637
+      ],
+      "mIoU": [
+        0.7338,
+        0.7469
+      ],
+      "Fscd": [
+        0.6447,
+        0.6632
+      ]
+    },
+    "bootstrap": "1000 image replicates"
+  },
+  "decodings_identical": true,
+  "seconds": 203.0,
+  "images_per_s": 8.34,
+  "cluster": "vulcan",
+  "published_source": "README results table (upstream selects on test)",
+  "accepted": true,
+  "acceptance_note": "Upstream-decoding SeK 0.2526 vs 0.2550 published (-0.24 pt), mIoU -0.01 pt, Fscd -0.36 pt; published value inside the 95% image-bootstrap CI [0.2412, 0.2637]. Not an exact reproduction (ChangeMamba-T was exact); the gap is small relative to the CI. Decodings identical.",
+  "timing_60_iters_bs16_bf16": {
+    "accum4_micro4": {
+      "s_per_iter": 1.507,
+      "max_mem_gib": 21.7,
+      "hours_50k": 20.9
+    },
+    "accum2_micro8": {
+      "s_per_iter": 1.578,
+      "max_mem_gib": 39.9,
+      "hours_50k": 21.9
+    }
+  },
+  "chosen_accum": 4
+}
