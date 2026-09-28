@@ -38,7 +38,7 @@ an exact upstream commit in its `cluster/models/<model>/README.md`.
 | 5 | ChangeMamba (MambaSCD-Tiny) | TGRS 2024 | State space | VMamba-T / ImageNet | `ChenHongruixuan/ChangeMamba` (Apache-2.0) | **yes**, validated (SeK_fromto 0.2208) |
 | 6 | Mamba-FCS | JSTARS 2026 | State space + frequency fusion, SeK loss | VMamba-B / ImageNet (206 M params total) | `Buddhi19/MambaFCS` (MIT) | **yes** (HF `buddhi19/MambaFCS`, `SECOND_SeK_0.255.pth`) |
 | 7 | PerASCD | 2026 | Foundation model | PerA ViT-G (≈548 M) / RS self-supervised | `SathShen/PerASCD` (MIT) | **yes** (HF `SathShen/PerASCD-Checkpoint`, 4.1 GB) |
-| 8 | ChangeMamba-Base (MambaSCD-Base) | TGRS 2024 | State space | VMamba-B / ImageNet (97 M params) | `ChenHongruixuan/ChangeMamba` (Apache-2.0) | **yes** (Zenodo 15479555, `MambaSCD_Base_SECOND_SeK_0.2292.pth`) |
+| 8 | ChangeMamba-Base (MambaSCD-Base) | TGRS 2024 | State space | VMamba-B / ImageNet (97 M params) | `ChenHongruixuan/ChangeMamba` (Apache-2.0) | **yes**, validated (SeK_fromto 0.2293 vs 0.2292) |
 | 9 | TED | TGRS 2024 (SCanNet paper) | CNN (triple encoder-decoder) | ResNet-34 / ImageNet | `DingLei14/SCanNet` (no licence file) | no |
 
 TED, first listed as optional, is included. It shares SCanNet's repository,
@@ -153,7 +153,7 @@ separate 75k pilot run (about 1.5 × one seed).
 | SCanNet (measured; same) | 6.7–15.8 | 20–47 |
 | ChangeMask | 5–10 | 15–30 |
 | ChangeMamba-T (measured) | 17.5 | 52 |
-| ChangeMamba-Base (estimate, ~Mamba-FCS) | ~20 | ~60 (+ pilot) |
+| ChangeMamba-Base (measured, ACCUM 2) | 23.9 | 72 (+ ~36 h pilot) |
 | Mamba-FCS (measured, 206 M params, ACCUM 4) | 20.9 | 63 (+ 31 h pilot) |
 | PerASCD (ViT-G) | 50–80 | 150–240 |
 | BCD track (4 models, LEVIR-CD) | 3–10 each | 40–100 |

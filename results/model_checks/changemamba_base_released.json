@@ -1,0 +1,57 @@
+{
+  "what": "ChangeMamba MambaSCD-Base released checkpoint run through the robustcd adapter on SECOND test (1694 images)",
+  "cluster": "vulcan",
+  "device": "NVIDIA L40S (sm_89)",
+  "job": "cmb-validate (validate_base.sbatch), 2026-09-28",
+  "checkpoint": "MambaSCD_Base_SECOND_SeK_0.2292.pth (Zenodo 15479555, md5 4fb2cf040d58e5e0da16380d781ca5a0)",
+  "cm_commit": "9ce9cec13f9ea14bc0ad91f071577ec9b3a97983",
+  "n_params": 97000000.0,
+  "load": {
+    "loaded_keys": 1000,
+    "unexpected": 0
+  },
+  "upstream_decoding": {
+    "SeK_fromto": 0.2293,
+    "Fscd_fromto": 0.5532,
+    "SeK": 0.2411,
+    "mIoU": 0.7368,
+    "Fscd": 0.6403,
+    "published_value": 0.2292,
+    "reproduced": true
+  },
+  "protocol_decoding": {
+    "SeK": 0.2411,
+    "SeK_ci95": [
+      0.2298,
+      0.2522
+    ],
+    "mIoU": 0.7368,
+    "Fscd": 0.6403,
+    "kappa_n0": 0.3635,
+    "SeK_fromto": 0.2293,
+    "bootstrap": "1000 image replicates"
+  },
+  "decodings_identical": true,
+  "throughput_img_per_s_fp32": {
+    "full": 8.65,
+    "restricted": 9.65
+  },
+  "timing_60_iters_bs16_bf16": {
+    "accum4_micro4": {
+      "s_per_iter": 1.616,
+      "max_mem_gib": 21.3,
+      "hours_50k": 22.4
+    },
+    "accum2_micro8": {
+      "s_per_iter": 1.722,
+      "max_mem_gib": 41.0,
+      "hours_50k": 23.9
+    }
+  },
+  "chosen_accum": 2,
+  "notes": [
+    "Published 0.2292 is the 37-class from-to SeK with test-set selection upstream; reproduced to 1e-4. Under the SECOND definition the same checkpoint scores 0.2411.",
+    "ACCUM=2 (micro-batch 8) is chosen to match ChangeMamba-T, so that BatchNorm sees the same micro-batch and Tiny vs Base isolates encoder size; ACCUM=4 would be 7% faster."
+  ],
+  "source_log": "cmb-validate-*.out (pasted by user)"
+}

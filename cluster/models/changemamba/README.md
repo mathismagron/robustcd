@@ -93,3 +93,16 @@ bash ~/robustcd/cluster/models/changemamba/setup.sh                     # fetche
 sbatch ~/robustcd/cluster/models/changemamba/validate_base.sbatch       # 0.2292 check + timing
 sbatch --export=ALL,VARIANT=base,SEED=0,MAX_ITERS=75000,ACCUM=<timing> ~/robustcd/cluster/models/changemamba/train.sbatch
 ```
+
+**Validation (Vulcan L40S, `validate_base.sbatch`):**
+- The released checkpoint gives SeK_fromto **0.2293** against 0.2292
+  published, so it is reproduced. Under the SECOND definition it scores
+  SeK 0.2411 [95% CI 0.2298, 0.2522], mIoU 0.7368, Fscd 0.6403. Upstream
+  and protocol decodings are identical.
+- Cost at batch 16:
+  - `ACCUM=4`: 1.62 s/it, 21.3 GiB;
+  - `ACCUM=2`: 1.72 s/it, 41.0 GiB.
+- **`ACCUM=2` is used**, the same micro-batch of 8 as Tiny. BatchNorm then
+  sees the same batch in both variants, so Tiny vs Base isolates encoder
+  size. The price is 7 % more time (23.9 h per 50k seed, one resubmission).
+- Record: `results/model_checks/changemamba_base_released.json`.
