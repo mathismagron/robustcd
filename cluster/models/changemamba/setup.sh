@@ -3,8 +3,8 @@
 #     bash ~/robustcd/cluster/models/changemamba/setup.sh
 # 1. clones ChangeMamba at the pinned commit into ~/ext/ChangeMamba
 # 2. installs its extra Python deps into the robustcd GPU env (--no-index)
-# 3. downloads the VMamba-Tiny ImageNet backbone and the released
-#    MambaSCD-Tiny SECOND checkpoint from Zenodo, verified by md5
+# 3. downloads the VMamba-Tiny and VMamba-Base ImageNet backbones and the released
+#    MambaSCD-Tiny and MambaSCD-Base SECOND checkpoints from Zenodo, verified by md5
 # The CUDA kernel is compiled on a GPU node by build_and_validate.sbatch.
 set -euo pipefail
 
@@ -44,5 +44,8 @@ fetch() {  # name md5
 }
 fetch vssm_tiny_0230_ckpt_epoch_262.pth d64653bba8f6e5c0d6f4ac6275e1be61
 fetch MambaSCD_Tiny_SECOND_SeK_0.2208.pth d1c1d50267da8063b9caa56b63ff1396
+# MambaSCD-Base (added 2026-09-28, protocol amendment A3)
+fetch vssm_base_0229_ckpt_epoch_237.pth 3e4110259f482f552dc70abcf3381e71
+fetch MambaSCD_Base_SECOND_SeK_0.2292.pth 4fb2cf040d58e5e0da16380d781ca5a0
 
 echo "setup done. Next: sbatch ~/robustcd/cluster/models/changemamba/build_and_validate.sbatch"

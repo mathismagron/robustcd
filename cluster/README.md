@@ -90,7 +90,7 @@ into `$SLURM_TMPDIR`. It must end with `ALL PASS`. The resolved package
 versions are written to `~/envs/robustcd-gpu/freeze.txt`; commit a copy with
 the results.
 
-VMamba-based models (ChangeMamba, CSF-Mamba) ship their own selective-scan
+VMamba-based models (ChangeMamba, Mamba-FCS) ship their own selective-scan
 CUDA extension, which is not part of this env. It gets built per model repo in
 a later step.
 

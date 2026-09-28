@@ -65,7 +65,7 @@ SECOND colour table (`robustcd.metrics.labels`). Every job stages
   gradient accumulation to reach the effective batch size.
 - **Normalisation**: each model's own (e.g. ImageNet mean/std), recorded.
 - **Optimiser, learning-rate schedule, loss**: the model's published recipe.
-  Loss design is part of a method (e.g. CSF-Mamba's SeK-oriented term), so
+  Loss design is part of a method (e.g. Mamba-FCS's SeK loss), so
   it is not unified. For reference, ChangeMamba SCD uses AdamW (lr 1e-4,
   wd 5e-3), StepLR (step 10k, γ 0.5), and CE + Lovász-softmax on the change
   and both semantic heads plus a semantic-consistency MSE on unchanged pixels.
@@ -126,6 +126,21 @@ SECOND colour table (`robustcd.metrics.labels`). Every job stages
     within the budget, so the budget is kept.
   - *Reporting.* The literal failure, its cause and this reinterpretation
     are reported in the paper.
+- **Amendment A3 (2026-09-28): pilot models.** Written before any
+  Mamba-FCS or ChangeMamba-Base training result.
+  - *Change.* CSF-Mamba is withdrawn from the benchmark and therefore from the
+    pilot list above. It is the benchmark author's own unpublished model, it
+    has no public reference or released checkpoint to validate an adapter
+    against, and after ablation it reduces to a siamese VMamba-T already
+    covered by ChangeMamba-T.
+  - *Replacement.* ChangeMamba-Base (MambaSCD-Base) takes its place. It shares
+    Mamba-FCS's VMamba-B encoder and ChangeMamba-T's code, which separates
+    encoder size from decoder design.
+  - *Where the rule now stands.* It has been applied to ChangeMamba-T and to
+    the CNN baselines (HRSCD-str4, Bi-SRNet, TED, SCanNet). It remains to be
+    applied to the seed-0 75k runs of Mamba-FCS and ChangeMamba-Base, the last
+    two models with a step schedule. The budget is fixed once both are in.
+    PerASCD and ChangeMask follow the same rule when they are trained.
 - **Pilot outcome** (`docs/figures/fig_val_curves_second.png`,
   `results/training_val_summary_second.csv`, `results/training_logs/`):
   - *Ding-codebase models.* The literal within-pilot rule passes for
@@ -146,8 +161,8 @@ SECOND colour table (`robustcd.metrics.labels`). Every job stages
     flag seed 1 (best at 56k, gap 0.73 pt), while seed 2 peaks at 34k.
   - *ChangeMamba.* Kept under A2.
   - *Still to run.* The pilot rule is applied to every model's seed-0 run, so
-    the budget stays provisional until the Mamba-FCS and CSF-Mamba seed-0
-    pilots (75k, StepLR, so a prefix of the campaign run) are in. The test
+    the budget stays provisional until the Mamba-FCS and ChangeMamba-Base
+    seed-0 pilots (75k, StepLR, so a prefix of the campaign run) are in (A3). The test
     set stays unscored.
 - **Precision**: bf16 autocast on L40S, fp32 master weights.
 - **Seeds: 3 per model** (seeds 0, 1, 2). A seed fixes weight

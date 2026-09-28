@@ -38,12 +38,21 @@ an exact upstream commit in its `cluster/models/<model>/README.md`.
 | 5 | ChangeMamba (MambaSCD-Tiny) | TGRS 2024 | State space | VMamba-T / ImageNet | `ChenHongruixuan/ChangeMamba` (Apache-2.0) | **yes**, validated (SeK_fromto 0.2208) |
 | 6 | Mamba-FCS | JSTARS 2026 | State space + frequency fusion, SeK loss | VMamba-B / ImageNet (206 M params total) | `Buddhi19/MambaFCS` (MIT) | **yes** (HF `buddhi19/MambaFCS`, `SECOND_SeK_0.255.pth`) |
 | 7 | PerASCD | 2026 | Foundation model | PerA ViT-G (≈548 M) / RS self-supervised | `SathShen/PerASCD` (MIT) | **yes** (HF `SathShen/PerASCD-Checkpoint`, 4.1 GB) |
-| 8 | CSF-Mamba | author's method | State space, lightweight | VMamba-T / ImageNet | local repo | own |
+| 8 | ChangeMamba-Base (MambaSCD-Base) | TGRS 2024 | State space | VMamba-B / ImageNet (97 M params) | `ChenHongruixuan/ChangeMamba` (Apache-2.0) | **yes** (Zenodo 15479555, `MambaSCD_Base_SECOND_SeK_0.2292.pth`) |
+| 9 | TED | TGRS 2024 (SCanNet paper) | CNN (triple encoder-decoder) | ResNet-34 / ImageNet | `DingLei14/SCanNet` (no licence file) | no |
 
-Optional ninth entry, added only if budget allows: **TED**, the pure-CNN
-triple encoder-decoder from the SCanNet paper. It costs almost nothing to
-integrate because it shares SCanNet's repository and loop, and it isolates the
-effect of SCanNet's transformer on robustness.
+TED, first listed as optional, is included. It shares SCanNet's repository,
+loop and recipe, and TED vs SCanNet isolates SCanNet's transformer. The table
+therefore has 9 models.
+
+**CSF-Mamba withdrawn (2026-09-28, protocol amendment A3).** It was planned as
+entry 8, but it is the benchmark author's own unpublished model. It has no
+public reference or released checkpoint, and after ablation it reduces to a
+siamese VMamba-T, which ChangeMamba-T already covers. Including it would add a
+conflict of interest without testing a new hypothesis. It can instead be
+evaluated later with the published robustcd protocol. ChangeMamba-Base
+replaces it: ChangeMamba-T vs ChangeMamba-B isolates encoder size, and
+ChangeMamba-B vs Mamba-FCS isolates the decoder at equal encoder.
 
 ### Why these and not others
 
@@ -61,8 +70,7 @@ effect of SCanNet's transformer on robustness.
   SECOND metrics.
 - **Mamba-FCS** is a second state-space method with a released checkpoint.
   It uses VMamba-B, so ChangeMamba-T vs Mamba-FCS confounds architecture with
-  size. This is stated explicitly. If budget allows, ChangeMamba-B (MambaSCD-Base,
-  released on Zenodo record 14037769) disentangles the two.
+  size. ChangeMamba-B (entry 8) is included to separate the two.
 - **PerASCD** is the foundation-model representative. It has a released
   checkpoint and an MIT licence, and its encoder is pretrained on remote
   sensing data. The authors also released a VMamba-B variant of the same
@@ -109,7 +117,7 @@ for all 8 models on those two datasets.
 - **Shared budget.** 800 k samples (≈270 SECOND epochs) exceeds several
   published schedules. Best-val selection guards against over-training. The
   pilot rule is applied to every model's seed-0 run, as for ChangeMamba.
-- **Mamba-FCS SeK loss** and **CSF-Mamba's SeK-oriented term** are part of
+- **Mamba-FCS's SeK loss** and every other published loss are part of
   their methods. They are kept, as are all published losses.
 - **Class order.** Every adapter needs a LUT test against the robustcd SECOND
   order, as done for ChangeMamba (`SECOND_TO_CM`).
@@ -124,7 +132,7 @@ for all 8 models on those two datasets.
 3. **ChangeMask** (torchange): independent lineage; no checkpoint.
 4. **PerASCD**: most expensive (custom op, 4 GB checkpoint, memory); started
    once the pipeline has been exercised on the cheaper models.
-5. **CSF-Mamba**: last, by decision.
+5. **ChangeMamba-Base**: same adapter as ChangeMamba-T, Base config and weights.
 6. **BCD track** (LEVIR-CD reader first).
 
 ## Cost estimate (to be replaced by measured timings)
@@ -145,7 +153,7 @@ separate 75k pilot run (about 1.5 × one seed).
 | SCanNet (measured; same) | 6.7–15.8 | 20–47 |
 | ChangeMask | 5–10 | 15–30 |
 | ChangeMamba-T (measured) | 17.5 | 52 |
-| CSF-Mamba | ~15–20 | ~50 |
+| ChangeMamba-Base (estimate, ~Mamba-FCS) | ~20 | ~60 (+ pilot) |
 | Mamba-FCS (measured, 206 M params, ACCUM 4) | 20.9 | 63 (+ 31 h pilot) |
 | PerASCD (ViT-G) | 50–80 | 150–240 |
 | BCD track (4 models, LEVIR-CD) | 3–10 each | 40–100 |

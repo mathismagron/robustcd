@@ -71,3 +71,25 @@ Outputs of a run (`$SCRATCH/robustcd/runs/changemamba_tiny/seed<k>/`):
 (best val SeK within the budget), `last_model_budget.pth` and
 `best_model_extended.pth` (pilot only), `latest.pth` (for resuming),
 `summary.json`, `slurm_jobs.txt`.
+
+## MambaSCD-Base (added 2026-09-28, protocol amendment A3)
+
+The same adapter, run with `VARIANT=base`: config `vssm_base_224.yaml` (depths
+2-2-15-2, dim 128, `v3noz`, drop path 0.6), the ImageNet backbone
+`vssm_base_0229_ckpt_epoch_237.pth` and the released
+`MambaSCD_Base_SECOND_SeK_0.2292.pth` (Zenodo 15479555, md5 `4fb2…a0`). The
+recipe is identical to Tiny's (upstream `train_MambaSCD.py` defaults: batch
+16, 50k iterations, AdamW 1e-4 / 5e-3, StepLR 10k × 0.5).
+
+- The model has 97.0 M parameters.
+- Locally, the released checkpoint loads with 1000 keys, none missing,
+  unexpected or shape-mismatched. 590 legacy key names are remapped by
+  upstream's own loader.
+- The backbone matches the config, so the 5-vs-4 stage-3 block mismatch of
+  the Tiny backbone does not arise.
+
+```bash
+bash ~/robustcd/cluster/models/changemamba/setup.sh                     # fetches the two Base files
+sbatch ~/robustcd/cluster/models/changemamba/validate_base.sbatch       # 0.2292 check + timing
+sbatch --export=ALL,VARIANT=base,SEED=0,MAX_ITERS=75000,ACCUM=<timing> ~/robustcd/cluster/models/changemamba/train.sbatch
+```
