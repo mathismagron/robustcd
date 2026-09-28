@@ -102,6 +102,7 @@ Each model has its own directory with setup, validation and training jobs:
 |---|---|---|
 | `cluster/models/changemamba/` | MambaSCD-Tiny | `setup.sh`, then `build_and_validate.sbatch` (kernel build) |
 | `cluster/models/ding/` | SCanNet, TED, Bi-SRNet, HRSCD-str4 | `setup.sh`, then `validate.sbatch` |
+| `cluster/models/mambafcs/` | Mamba-FCS | `setup.sh` (reuses the ChangeMamba kernel), then `validate.sbatch` |
 
 ## Why a staging tar
 

@@ -36,7 +36,7 @@ an exact upstream commit in its `cluster/models/<model>/README.md`.
 | 3 | SCanNet | TGRS 2024 | Hybrid CNN-Transformer | ResNet-34 + CSWin blocks / ImageNet | `DingLei14/SCanNet` (no licence file) | **yes** (Google Drive) |
 | 4 | ChangeMask | ISPRS P&RS 2022 | Encoder-Transformer-Decoder | EfficientNet-B0 / ImageNet | `Z-Zheng/pytorch-change-models` (torchange, Apache-2.0) | no |
 | 5 | ChangeMamba (MambaSCD-Tiny) | TGRS 2024 | State space | VMamba-T / ImageNet | `ChenHongruixuan/ChangeMamba` (Apache-2.0) | **yes**, validated (SeK_fromto 0.2208) |
-| 6 | Mamba-FCS | JSTARS 2026 | State space + frequency fusion, SeK loss | VMamba-B / ImageNet | `Buddhi19/MambaFCS` (MIT) | **yes** (HF `buddhi19/MambaFCS`, `SECOND_SeK_0.255.pth`) |
+| 6 | Mamba-FCS | JSTARS 2026 | State space + frequency fusion, SeK loss | VMamba-B / ImageNet (206 M params total) | `Buddhi19/MambaFCS` (MIT) | **yes** (HF `buddhi19/MambaFCS`, `SECOND_SeK_0.255.pth`) |
 | 7 | PerASCD | 2026 | Foundation model | PerA ViT-G (≈548 M) / RS self-supervised | `SathShen/PerASCD` (MIT) | **yes** (HF `SathShen/PerASCD-Checkpoint`, 4.1 GB) |
 | 8 | CSF-Mamba | author's method | State space, lightweight | VMamba-T / ImageNet | local repo | own |
 

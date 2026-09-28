@@ -1,0 +1,13 @@
+{
+  "best": {
+    "SeK": 0.21534136789148653,
+    "iteration": 34000,
+    "mIoU": 0.7214136810157119,
+    "Fscd": 0.6163241300284338,
+    "SeK_fromto": 0.20680551013697365
+  },
+  "best_extended": null,
+  "budget_iters": 75000,
+  "last_iteration": 75000,
+  "wall_minutes_this_segment": 1087.9
+}

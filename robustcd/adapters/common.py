@@ -112,3 +112,61 @@ def write_predictions(model, reader, ids: Sequence[str], out_dir: str | Path, de
                           if k in full}
     (out / "predict_info.json").write_text(json.dumps(info, indent=2, default=str))
     return info
+
+
+def md5sum(path: str | Path) -> str:
+    import hashlib
+
+    h = hashlib.md5()
+    with open(path, "rb") as fh:
+        for chunk in iter(lambda: fh.read(1 << 22), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def score_release(model, reader, ids: Sequence[str], device, normalize_pair: Callable, decode: Callable,
+                  batch_size: int = 8, published: Optional[dict] = None, progress_every: int = 25) -> dict:
+    """Adapter acceptance check: one fp32 pass, scored with upstream ("full") and protocol decodings.
+
+    Returns upstream-decoding scores with their difference from ``published``,
+    protocol-decoding scores with a 1000-replicate image-bootstrap CI, whether
+    the two decodings agree, and throughput.
+    """
+    import torch
+
+    from robustcd.metrics import bootstrap_ci
+
+    meters = {"full": SCDMeter(), "restricted": SCDMeter()}
+    model.eval()
+    t0 = time.time()
+    with torch.no_grad():
+        for n_done, chunk in enumerate(batches(ids, batch_size)):
+            samples = [reader.get(s) for s in chunk]
+            pairs = [normalize_pair(s["im1"], s["im2"]) for s in samples]
+            x1 = torch.from_numpy(np.stack([p[0] for p in pairs]).astype(np.float32)).to(device)
+            x2 = torch.from_numpy(np.stack([p[1] for p in pairs]).astype(np.float32)).to(device)
+            outputs = tuple(o.float() for o in model(x1, x2))
+            for mode, meter in meters.items():
+                s1, s2, _ = decode(outputs, mode)
+                for sid, smp, p1, p2 in zip(chunk, samples, s1, s2):
+                    meter.update(p1, p2, to_index(smp["label1"]), to_index(smp["label2"]), sample_id=sid)
+            if progress_every and n_done % progress_every == 0:
+                print(f"{min((n_done + 1) * batch_size, len(ids))}/{len(ids)} images {time.time() - t0:.0f}s",
+                      flush=True)
+    dt = time.time() - t0
+    keys = ("SeK", "mIoU", "Fscd", "kappa_n0", "SeK_fromto", "Fscd_fromto")
+    res = {m: {k: round(float(v), 4) for k, v in meters[m].compute().items() if k in keys} for m in meters}
+    r = meters["restricted"]
+    ci = bootstrap_ci(r.per_sample, r.score_fn, keys=("SeK", "mIoU", "Fscd"), n_boot=1000, seed=0)
+    pub = published or {}
+    return {
+        "n_images": len(ids),
+        "upstream_decoding": {**res["full"], "published": pub,
+                              "abs_diff_vs_published": {k: round(res["full"][k] - pub[k], 4)
+                                                        for k in ("SeK", "mIoU", "Fscd") if k in pub}},
+        "protocol_decoding": {**res["restricted"],
+                              "ci95": {k: [round(v["lo"], 4), round(v["hi"], 4)] for k, v in ci.items()},
+                              "bootstrap": "1000 image replicates"},
+        "decodings_identical": res["full"] == res["restricted"],
+        "seconds": round(dt, 1), "images_per_s": round(len(ids) / max(dt, 1e-9), 2),
+    }

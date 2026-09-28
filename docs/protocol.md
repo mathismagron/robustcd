@@ -126,15 +126,29 @@ SECOND colour table (`robustcd.metrics.labels`). Every job stages
     within the budget, so the budget is kept.
   - *Reporting.* The literal failure, its cause and this reinterpretation
     are reported in the paper.
-- **Pilot outcome so far** (`docs/figures/fig_val_curves_second.png`,
-  `results/training_val_summary_second.csv`):
-  - literal within-pilot rule passes for HRSCD-str4 (gap 0.00), Bi-SRNet
-    (0.09), TED (0.00) and SCanNet (0.00);
-  - under A1, SCanNet (+0.63 on seed 0) is pending its seeds 1–2;
-  - ChangeMamba is kept under A2;
-  - the CSF-Mamba pilot is still to run.
+- **Pilot outcome** (`docs/figures/fig_val_curves_second.png`,
+  `results/training_val_summary_second.csv`, `results/training_logs/`):
+  - *Ding-codebase models.* The literal within-pilot rule passes for
+    HRSCD-str4 (gap 0.00), Bi-SRNet (0.09), TED (0.00) and SCanNet seed 0
+    (0.00).
+  - *SCanNet under A1 (decided 2026-09-28).* Paired differences between the
+    75k and 50k runs:
 
-  The budget therefore remains provisional, and the test set stays unscored.
+    | seed | ΔSeK (pt) |
+    |---|---|
+    | 0 | +0.63 |
+    | 1 | +0.11 |
+    | 2 | −0.80 |
+
+    The mean is **−0.02 pt** (sd 0.72, 95 % t-interval [−1.82, 1.78]), below
+    0.5, so the 50k budget is kept. The seed-0 excess was seed noise.
+    Reported as a sensitivity result: the literal within-pilot reading would
+    flag seed 1 (best at 56k, gap 0.73 pt), while seed 2 peaks at 34k.
+  - *ChangeMamba.* Kept under A2.
+  - *Still to run.* The pilot rule is applied to every model's seed-0 run, so
+    the budget stays provisional until the Mamba-FCS and CSF-Mamba seed-0
+    pilots (75k, StepLR, so a prefix of the campaign run) are in. The test
+    set stays unscored.
 - **Precision**: bf16 autocast on L40S, fp32 master weights.
 - **Seeds: 3 per model** (seeds 0, 1, 2). A seed fixes weight
   initialisation, data order and augmentation draws. Every seed is reported,
