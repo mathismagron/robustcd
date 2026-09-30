@@ -114,6 +114,12 @@ for all 8 models on those two datasets.
   48 GB. It also needs the MultiScaleDeformableAttention op compiled for
   sm_89, as was done for VMamba. Its per-iteration cost must be measured with
   a 200-iteration timing job before committing seeds.
+  Adapter status: written and CPU-tested (`cluster/models/perascd/README.md`).
+  Protocol runs start from the PerA foundation weights (`pera_ViTG161024.params`,
+  9.1 GB, the file named in upstream `train.py`), never from the released SECOND
+  checkpoint, which was selected on the test split. The released checkpoint only
+  validates the adapter. `validate.sbatch` measures the cost (30 iterations per
+  micro-batch / checkpointing setting).
 - **Shared budget.** 800 k samples (≈270 SECOND epochs) exceeds several
   published schedules. Best-val selection guards against over-training. The
   pilot rule is applied to every model's seed-0 run, as for ChangeMamba.

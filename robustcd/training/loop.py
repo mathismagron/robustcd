@@ -7,6 +7,7 @@ protocol fixes for every model:
 
 - a seeded, resumable data order (``EpochOrderSampler``);
 - bf16 autocast and gradient accumulation to a fixed effective batch size;
+- optional gradient-norm clipping when the upstream recipe has it (off by default);
 - val evaluation every ``eval_interval`` iterations, and best-val checkpoint
   selection on robustcd SeK among evaluations at iterations <= budget;
 - ``best_model_extended.pth`` over the whole run when ``max_iters > budget``
@@ -93,6 +94,7 @@ class LoopConfig:
     workers: int = 4
     bf16: bool = True
     stop_after_min: Optional[float] = None
+    clip_grad_norm: Optional[float] = None   # upstream gradient clipping (PerASCD); None = off
     extra: Dict[str, Any] = field(default_factory=dict)   # recorded in run_config.json
 
     @property
@@ -216,6 +218,9 @@ def run(
             loss_sum += float(loss.detach()) / cfg.accum
             for k, v in step_logs.items():
                 logs[k] = logs.get(k, 0.0) + float(v) / cfg.accum
+        if cfg.clip_grad_norm is not None:
+            gn = torch.nn.utils.clip_grad_norm_(model.parameters(), cfg.clip_grad_norm)
+            logs["grad_norm"] = float(gn)   # norm before clipping, last iteration of the log window
         optimizer.step()
         optimizer.zero_grad(set_to_none=True)
         if scheduler is not None:
@@ -282,4 +287,20 @@ def poly_lr(base_lr: float, total_iters: int, power: float) -> Callable[[int], f
     """
     def f(it: int) -> float:
         return base_lr * max(0.0, 1.0 - float(it) / total_iters) ** power
+    return f
+
+
+def warmup_poly_lr(base_lr: float, total_iters: int, power: float, warmup_ratio: float,
+                   min_lr: float = 0.0) -> Callable[[int], float]:
+    """Linear warm-up then poly decay, as PerASCD's ``adjust_lr`` (legacy ``train.py``).
+
+    With ``r = it / total``: ``base_lr * r / warmup_ratio`` while ``r < warmup_ratio``,
+    then ``min_lr + (base_lr - min_lr) * ((1 - r) / (1 - warmup_ratio)) ** power``.
+    Like ``poly_lr``, it depends on the schedule length fixed at launch.
+    """
+    def f(it: int) -> float:
+        r = float(it) / total_iters
+        if r < warmup_ratio:
+            return base_lr * r / warmup_ratio
+        return min_lr + (base_lr - min_lr) * max(0.0, (1.0 - r) / (1.0 - warmup_ratio)) ** power
     return f
