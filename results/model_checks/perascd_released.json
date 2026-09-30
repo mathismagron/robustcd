@@ -1,0 +1,78 @@
+{
+  "what": "PerASCD released checkpoint run through the robustcd adapter on SECOND test (1694 images)",
+  "checkpoint": "PerAChain_40e_mIoU74.33_Sek26.11_Fscd66.41_OA88.70.pth (md5 5ae337dc991bec7be206356bceb9e4c8)",
+  "repo_commit": "a4d808a6cfb5df7efeee186730ac26b4504c9ed6",
+  "expected_commit": "a4d808a6cfb5df7efeee186730ac26b4504c9ed6",
+  "build": {
+    "msda": "cuda",
+    "msda_file": "/home/magron13/ext/perascd_msda_site/MultiScaleDeformableAttention.cpython-311-x86_64-linux-gnu.so",
+    "attention": "sdpa",
+    "checkpointing": {
+      "level": "none",
+      "adapter_modules": 10,
+      "vit_blocks": 0
+    }
+  },
+  "n_params": 548172441,
+  "load": {
+    "loaded_keys": 988,
+    "renamed": 6,
+    "missing": 0,
+    "unexpected": 0,
+    "checkpoint_meta": {
+      "Fscd": 0.6641377746650187,
+      "Sek": 0.2610871229764664,
+      "mIoU": 0.7432850398256678
+    },
+    "epoch": 40
+  },
+  "class_order": "released checkpoint predicts in ChangeMamba order, mapped to robustcd",
+  "device": "NVIDIA L40S",
+  "max_mem_gb": 3.7,
+  "n_images": 1694,
+  "upstream_decoding": {
+    "SeK": 0.2611,
+    "kappa_n0": 0.3897,
+    "mIoU": 0.7433,
+    "Fscd": 0.6641,
+    "SeK_fromto": 0.253,
+    "Fscd_fromto": 0.5894,
+    "published": {
+      "SeK": 0.2611,
+      "Fscd": 0.6641,
+      "mIoU": 0.7433
+    },
+    "abs_diff_vs_published": {
+      "SeK": 0.0,
+      "mIoU": 0.0,
+      "Fscd": 0.0
+    }
+  },
+  "protocol_decoding": {
+    "SeK": 0.2611,
+    "kappa_n0": 0.3897,
+    "mIoU": 0.7433,
+    "Fscd": 0.6641,
+    "SeK_fromto": 0.253,
+    "Fscd_fromto": 0.5894,
+    "ci95": {
+      "SeK": [
+        0.2498,
+        0.2724
+      ],
+      "mIoU": [
+        0.7372,
+        0.7495
+      ],
+      "Fscd": [
+        0.6548,
+        0.6731
+      ]
+    },
+    "bootstrap": "1000 image replicates"
+  },
+  "decodings_identical": true,
+  "seconds": 314.4,
+  "images_per_s": 5.39,
+  "job": "Vulcan 1239790 (perascd-validate), 2026-09-30"
+}

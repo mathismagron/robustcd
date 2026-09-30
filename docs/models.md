@@ -146,7 +146,7 @@ for all 8 models on those two datasets.
 Per seed at 50 k iterations × effective batch 16 on one L40S, bf16 training.
 Measured (100-iteration timing on one L40S, job 1194598, and the ChangeMamba
 pilot): ChangeMamba-T 1.23 s/it, HRSCD-str4 0.73, Bi-SRNet 0.35, TED 0.22
-(0.57 with the pseudo-label teacher), SCanNet 0.48 (1.14 with the teacher), Mamba-FCS 1.51.
+(0.57 with the pseudo-label teacher), SCanNet 0.48 (1.14 with the teacher), Mamba-FCS 1.51, PerASCD 1.90 (job 1239790).
 All Ding-codebase models fit batch 16 in one pass (8–19 GiB). Unmeasured rows
 are order-of-magnitude guesses from backbone size. Poly-schedule models add a
 separate 75k pilot run (about 1.5 × one seed).
@@ -161,7 +161,7 @@ separate 75k pilot run (about 1.5 × one seed).
 | ChangeMamba-T (measured) | 17.5 | 52 |
 | ChangeMamba-Base (measured, ACCUM 2) | 23.9 | 72 (+ ~36 h pilot) |
 | Mamba-FCS (measured, 206 M params, ACCUM 4) | 20.9 | 63 (+ 31 h pilot) |
-| PerASCD (ViT-G) | 50–80 | 150–240 |
+| PerASCD (measured, 548 M params, ACCUM 4) | 27.1 | 81 (+ 41 h pilot) |
 | BCD track (4 models, LEVIR-CD) | 3–10 each | 40–100 |
 
 Order of magnitude: **450–700 L40S GPU-h** for training, plus evaluation

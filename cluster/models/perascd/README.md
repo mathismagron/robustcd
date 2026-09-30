@@ -29,9 +29,11 @@ without downloading the file:
 - all 486 tensors match the backbone by name and shape, including
   `pos_embed` 1 × 785 × 1024 (the ViT is built at 448 = 28 patches);
 - none is unexpected;
-- the 239 backbone tensors left at initialisation all belong to the adapter:
-  interactions 172, SPM 44, norm1–4 BatchNorms 20, up-sampler 2, level
-  embedding 1.
+- the 239 backbone state entries left at initialisation all belong to the
+  adapter: interactions 172, SPM 44, norm1–4 BatchNorms 20, up-sampler 2,
+  level embedding 1. On the cluster, `load_state_dict` reports 229 of them as
+  missing: PyTorch fills in the 10 BatchNorm `num_batches_tracked` counters
+  without listing them.
 
 `load_pretrained` enforces the same checks on every run. Upstream loads with
 `strict=False` and prints a success line whatever matched.
@@ -100,10 +102,33 @@ A warm-up/poly schedule depends on its total length, so the 75k pilot is a
 separate run, as for the Ding models (amendment A1 paired rule; decision in
 `docs/protocol.md`).
 
-## Acceptance
+## Acceptance (Vulcan job 1239790, 2026-09-30, L40S)
 
-- Released checkpoint, upstream decoding: SeK 0.2611 ± 0.0005 and
-  Fscd 0.6641 ± 0.0005 are expected. The csf-mamba teacher check measured
-  0.261079 / 0.664104 on the same 1694 test images with explicit attention.
-- Results: `results/model_checks/perascd_released.json` (pending).
-- Timing: pending (validate.sbatch, part 2).
+- **Released checkpoint reproduced exactly.** Upstream decoding gives SeK
+  0.2611, Fscd 0.6641 and mIoU 0.7433, i.e. 0.0000 from the published values
+  on all three. Protocol decoding is identical (SeK 95 % CI [0.2498, 0.2724],
+  1000 image replicates).
+  - Load: 988 keys, 6 CAGM renames, 0 missing, 0 unexpected.
+  - The run used the SDPA attention and the compiled MSDA op (built in 38 s).
+  - fp32 inference at batch 4: 5.39 images/s, 3.7 GiB peak memory (explicit
+    upstream attention: ≈ 25 GiB at batch 8).
+  - Record: `results/model_checks/perascd_released.json`.
+- **Timing.** Effective batch 16, full 512 tiles, PerA initialisation, 30
+  iterations; the mean excludes the first 10.
+
+  | ACCUM (micro-batch) | Checkpointing | s/it | Peak GiB | 50k iterations |
+  |---|---|---|---|---|
+  | **4 (4)** | **none** | **1.902** | **24.3** | **26.4 h** |
+  | 4 (4) | full | 2.419 | 13.5 | 33.6 h |
+  | 8 (2) | none | 2.078 | 15.8 | 28.9 h |
+  | 2 (8) | full | 2.521 | 19.9 | 35.0 h |
+
+  Validation on the 297 val tiles takes about 105 s, i.e. about 0.7 h over
+  the 25 evaluations of a run. The global gradient norm before clipping is
+  1.7–2.0 in these first iterations, so upstream's 1.5 clip is active.
+- **Setting used: ACCUM=4, CKPT=none.** It is the fastest, and its
+  micro-batch of 4 is upstream's own (4 × 2 accumulation). The adapter and
+  decoder BatchNorms therefore see upstream's per-pass batch statistics.
+  - Per seed: ≈ 27 h, i.e. two 24 h segments with the 22.5 h guard.
+  - 75k pilot: ≈ 41 h.
+  - Three seeds plus the pilot: ≈ 122 L40S GPU-h.
