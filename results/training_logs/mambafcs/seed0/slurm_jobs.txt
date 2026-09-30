@@ -1,0 +1,2 @@
+2026-09-28T05:45:06-06:00 job 1213560 seed 0 max_iters 75000 budget 50000 accum 4 -> /scratch/magron13/robustcd/runs/mambafcs/seed0
+2026-09-29T04:46:33-06:00 job 1226093 seed 0 max_iters 75000 budget 50000 accum 4 -> /scratch/magron13/robustcd/runs/mambafcs/seed0

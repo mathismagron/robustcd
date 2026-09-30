@@ -1,0 +1,2 @@
+2026-09-28T11:52:50-06:00 job 1215517 variant base seed 0 max_iters 75000 budget 50000 accum 2 -> /scratch/magron13/robustcd/runs/changemamba_base/seed0
+2026-09-29T10:54:25-06:00 job 1230541 variant base seed 0 max_iters 75000 budget 50000 accum 2 -> /scratch/magron13/robustcd/runs/changemamba_base/seed0

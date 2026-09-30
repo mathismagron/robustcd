@@ -1,0 +1,39 @@
+{
+  "out": "/scratch/magron13/robustcd/runs/mambafcs/seed1",
+  "seed": 1,
+  "max_iters": 50000,
+  "budget_iters": 50000,
+  "batch_size": 16,
+  "accum": 4,
+  "eval_interval": 2000,
+  "log_interval": 50,
+  "workers": 8,
+  "bf16": true,
+  "stop_after_min": 1380.0,
+  "extra": {
+    "adapter": "mambafcs",
+    "fcs_root": "/home/magron13/ext/MambaFCS",
+    "fcs_commit": "5c01f1ac86adff89d6dc5eb6e02d83ee8c16f25c",
+    "expected_commit": "5c01f1ac86adff89d6dc5eb6e02d83ee8c16f25c",
+    "backbone": "/home/magron13/weights/mambafcs/vssm_base_0229_ckpt_epoch_237.pth",
+    "backbone_load": {
+      "matched": 398,
+      "unexpected": 4,
+      "shape_mismatch": 0,
+      "missing": 8
+    },
+    "lr": 0.0001,
+    "weight_decay": 0.0005,
+    "lr_step_iters": 1250,
+    "photometric_aug": false,
+    "debug_crop": 0,
+    "n_train": 2671,
+    "n_val": 297
+  },
+  "torch": "2.5.1",
+  "cuda": "12.2",
+  "node": "rack12-08",
+  "slurm_job_id": "1213561",
+  "device": "NVIDIA L40S",
+  "n_params": 206148071
+}

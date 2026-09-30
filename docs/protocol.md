@@ -77,7 +77,8 @@ SECOND colour table (`robustcd.metrics.labels`). Every job stages
   StepLR published for 50k iterations is kept as is, and a cosine schedule
   spans the full budget.
 - **Pilot rule for the budget, fixed in advance.** Before the full campaign,
-  train the pilot models (ChangeMamba, a CNN baseline, then CSF-Mamba) for
+  train the pilot models (ChangeMamba, a CNN baseline, then ~~CSF-Mamba~~ [withdrawn
+  by A3, replaced by ChangeMamba-Base; Mamba-FCS also piloted]) for
   1.5 × the budget, logging val SeK. Keep the budget if, for every pilot
   model, the best val SeK over the last 30 % of the budget is within 0.5 SeK
   point of the best val SeK over the extended run. Otherwise raise the budget
@@ -129,7 +130,7 @@ SECOND colour table (`robustcd.metrics.labels`). Every job stages
 - **Amendment A3 (2026-09-28): pilot models.** Written before any
   Mamba-FCS or ChangeMamba-Base training result.
   - *Change.* CSF-Mamba is withdrawn from the benchmark and therefore from the
-    pilot list above. It is the benchmark author's own unpublished model, it
+    pilot list above, where the original wording is kept struck through. It is the benchmark author's own unpublished model, it
     has no public reference or released checkpoint to validate an adapter
     against, and after ablation it reduces to a siamese VMamba-T already
     covered by ChangeMamba-T.
@@ -160,10 +161,25 @@ SECOND colour table (`robustcd.metrics.labels`). Every job stages
     Reported as a sensitivity result: the literal within-pilot reading would
     flag seed 1 (best at 56k, gap 0.73 pt), while seed 2 peaks at 34k.
   - *ChangeMamba.* Kept under A2.
-  - *Still to run.* The pilot rule is applied to every model's seed-0 run, so
-    the budget stays provisional until the Mamba-FCS and ChangeMamba-Base
-    seed-0 pilots (75k, StepLR, so a prefix of the campaign run) are in (A3). The test
-    set stays unscored.
+  - *Mamba-FCS and ChangeMamba-Base (2026-09-30).* The literal rule passes
+    for both (step schedules, so the seed-0 pilot is a prefix of the campaign
+    run):
+
+    | Model | Best within budget | Best in 36k–50k | Gap | Best in 50k–75k |
+    |---|---|---|---|---|
+    | Mamba-FCS | 24.12 at 22k | 24.09 | 0.03 | 24.10 |
+    | ChangeMamba-Base | 23.01 at 14k | 22.58 | 0.43 | 22.62 |
+
+  - **Decision: the budget of 50k iterations × batch 16 is final** for all
+    models, as A3 set out. PerASCD and ChangeMask are still to be trained.
+    They are trained at this budget, and their seed-0 75k runs are checked
+    with the same rule. If the rule fails for one of them, that model is
+    reported as possibly under-trained at the shared budget; this does not
+    reopen the budget of the models already trained.
+  - *Test set.* Per "Checkpoint selection", the test set is scored only after
+    all training runs are complete, i.e. once PerASCD and ChangeMask are
+    trained. Test predictions may be generated earlier, but they are not
+    scored.
 - **Precision**: bf16 autocast on L40S, fp32 master weights.
 - **Seeds: 3 per model** (seeds 0, 1, 2). A seed fixes weight
   initialisation, data order and augmentation draws. Every seed is reported,
